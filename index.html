@@ -1,337 +1,406 @@
-import React, { useState, useEffect } from 'react';
-import { BookOpen, GraduationCap, Mail, Github, Linkedin, ExternalLink, Menu, X, Award, FileText, Code } from 'lucide-react';
-
-/**
- * 🎓 개인 학술 포트폴리오 데이터 (PERSONAL DATA)
- * 한신대학교 AI/SW 전공생을 위한 맞춤형 데이터입니다.
- */
-const portfolioData = {
-  profile: {
-    name: "조재현 (Jaehyeon Jo)",
-    title: "Undergraduate Student in AI/SW",
-    university: "Hanshin University (한신대학교)",
-    email: "sinabrocjh@hs.ac.kr",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
-    bio: "현재 한신대학교에서 AI/SW(인공지능·소프트웨어)를 중점적으로 학습하고 있습니다. 데이터 기반의 문제 해결 능력과 사용자 친화적인 소프트웨어 개발에 깊은 관심을 가지고 있으며, 최신 AI 기술을 실무에 적용하는 풀스택 엔지니어를 목표로 성장 중입니다.",
-    interests: ["Artificial Intelligence", "Software Engineering", "Web Development", "Data Science"]
-  },
-  education: [
-    {
-      degree: "B.S. in AI & Software",
-      school: "Hanshin University (한신대학교)",
-      year: "2025",
-      description: "AI/SW 대학 소속. 주요 수강: 기계학습, 딥러닝, 웹프로그래밍, 알고리즘."
-    },
-    {
-      degree: "High School Diploma",
-      school: "Hanshin High School",
-      year: "2019 - 2022",
-      description: "Graduated with honors in Science & Math track."
-    }
-  ],
-  publications: [
-    {
-      title: "Undergraduate Research: AI Chatbot for Campus Guide",
-      authors: "Jaehyeon Jo, Team Alpha",
-      venue: "Hanshin AI/SW Capstone Design Fair",
-      year: "2024",
-      link: "#",
-      tag: "Project"
-    },
-    {
-      title: "Comparative Study of CNN Models for Hangul Recognition",
-      authors: "Jaehyeon Jo",
-      venue: "Student Tech Seminar",
-      year: "2023",
-      link: "#",
-      tag: "Research"
-    }
-  ],
-  projects: [
-    {
-      title: "HSU Smart Cafeteria",
-      description: "한신대학교 학생 식당의 메뉴를 추천하고 혼잡도를 예측하는 웹 서비스. React 프론트엔드와 Python Django 백엔드 활용.",
-      tech: ["React", "Django", "TensorFlow"],
-      link: "#"
-    },
-    {
-      title: "AI Study Mate",
-      description: "학습 습관 데이터를 분석하여 맞춤형 스터디 스케줄을 제안하는 모바일 앱 프로젝트.",
-      tech: ["Flutter", "Firebase", "Scikit-learn"],
-      link: "#"
-    }
-  ]
-};
-
-// --- 컴포넌트 시작 ---
-
-const SectionTitle = ({ children, icon: Icon }) => (
-  <div className="flex items-center gap-2 mb-6 border-b pb-2 border-slate-200">
-    {Icon && <Icon className="w-6 h-6 text-blue-600" />}
-    <h2 className="text-2xl font-bold text-slate-800">{children}</h2>
-  </div>
-);
-
-const Card = ({ children, className = "" }) => (
-  <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-200 ${className}`}>
-    {children}
-  </div>
-);
-
-const Badge = ({ children }) => (
-  <span className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md border border-blue-100">
-    {children}
-  </span>
-);
-
-export default function App() {
-  const [activeSection, setActiveSection] = useState('home');
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // 스크롤 시 네비게이션 활성화 처리
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ['home', 'education', 'publications', 'projects', 'contact'];
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          if (rect.top >= 0 && rect.top <= 300) {
-            setActiveSection(section);
-            break;
-          }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조재현 - Academic Portfolio</title>
+    
+    <!-- React & ReactDOM (필수 라이브러리) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel (JSX 변환기) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS (스타일링) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Animation Styles -->
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-600 font-sans">
+    <div id="root"></div>
 
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(id);
-      setIsMenuOpen(false);
-    }
-  };
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'education', label: 'Education' },
-    { id: 'publications', label: 'Publications' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'contact', label: 'Contact' },
-  ];
+        // --- 아이콘 컴포넌트 (SVG) ---
+        // 외부 라이브러리 의존성 없이 단독 실행을 위해 SVG 코드를 직접 포함했습니다.
+        const BookOpen = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        );
+        const GraduationCap = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        );
+        const Mail = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        );
+        const Github = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        );
+        const Linkedin = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+        );
+        const ExternalLink = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        );
+        const Menu = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        );
+        const X = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        );
+        const FileText = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
+        );
+        const Code = ({ size = 24, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        );
 
-  return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-600">
-      {/* 네비게이션 바 */}
-      <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-slate-200 z-50 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex-shrink-0 font-bold text-xl text-slate-800 cursor-pointer" onClick={() => scrollToSection('home')}>
-              {portfolioData.profile.name}
+        // --- 데이터 정의 (Data) ---
+        const portfolioData = {
+            profile: {
+                name: "조재현 (Jaehyeon Jo)",
+                title: "Undergraduate Student in AI/SW",
+                university: "Hanshin University (한신대학교)",
+                email: "sinabrocjh@hs.ac.kr",
+                github: "https://github.com",
+                linkedin: "https://linkedin.com",
+                bio: "현재 한신대학교에서 AI/SW(인공지능·소프트웨어)를 중점적으로 학습하고 있습니다. 데이터 기반의 문제 해결 능력과 사용자 친화적인 소프트웨어 개발에 깊은 관심을 가지고 있으며, 최신 AI 기술을 실무에 적용하는 풀스택 엔지니어를 목표로 성장 중입니다.",
+                interests: ["Artificial Intelligence", "Software Engineering", "Web Development", "Data Science"]
+            },
+            education: [
+                {
+                    degree: "B.S. in AI & Software",
+                    school: "Hanshin University (한신대학교)",
+                    year: "2025",
+                    description: "AI/SW 대학 소속. 주요 수강: 기계학습, 딥러닝, 웹프로그래밍, 알고리즘."
+                },
+                {
+                    degree: "High School Diploma",
+                    school: "Hanshin High School",
+                    year: "2019 - 2022",
+                    description: "Graduated with honors in Science & Math track."
+                }
+            ],
+            publications: [
+                {
+                    title: "Undergraduate Research: AI Chatbot for Campus Guide",
+                    authors: "Jaehyeon Jo, Team Alpha",
+                    venue: "Hanshin AI/SW Capstone Design Fair",
+                    year: "2024",
+                    link: "#",
+                    tag: "Project"
+                },
+                {
+                    title: "Comparative Study of CNN Models for Hangul Recognition",
+                    authors: "Jaehyeon Jo",
+                    venue: "Student Tech Seminar",
+                    year: "2023",
+                    link: "#",
+                    tag: "Research"
+                }
+            ],
+            projects: [
+                {
+                    title: "HSU Smart Cafeteria",
+                    description: "한신대학교 학생 식당의 메뉴를 추천하고 혼잡도를 예측하는 웹 서비스. React 프론트엔드와 Python Django 백엔드 활용.",
+                    tech: ["React", "Django", "TensorFlow"],
+                    link: "#"
+                },
+                {
+                    title: "AI Study Mate",
+                    description: "학습 습관 데이터를 분석하여 맞춤형 스터디 스케줄을 제안하는 모바일 앱 프로젝트.",
+                    tech: ["Flutter", "Firebase", "Scikit-learn"],
+                    link: "#"
+                }
+            ]
+        };
+
+        // --- 컴포넌트 시작 (Components) ---
+
+        const SectionTitle = ({ children, icon: Icon }) => (
+            <div className="flex items-center gap-2 mb-6 border-b pb-2 border-slate-200">
+                {Icon && <Icon className="w-6 h-6 text-blue-600" />}
+                <h2 className="text-2xl font-bold text-slate-800">{children}</h2>
             </div>
-            
-            {/* 데스크탑 메뉴 */}
-            <div className="hidden md:flex space-x-8">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`text-sm font-medium transition-colors duration-200 ${
-                    activeSection === item.id ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+        );
+
+        const Card = ({ children, className = "" }) => (
+            <div className={`bg-white p-6 rounded-lg shadow-sm border border-slate-100 hover:shadow-md transition-shadow duration-200 ${className}`}>
+                {children}
             </div>
+        );
 
-            {/* 모바일 메뉴 버튼 */}
-            <div className="md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-slate-500 hover:text-slate-900">
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </div>
-          </div>
-        </div>
+        const Badge = ({ children }) => (
+            <span className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 rounded-md border border-blue-100">
+                {children}
+            </span>
+        );
 
-        {/* 모바일 메뉴 드롭다운 */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-slate-100">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className="block w-full text-left px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md"
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
+        function App() {
+            const [activeSection, setActiveSection] = useState('home');
+            const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-      {/* 메인 콘텐츠 컨테이너 */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-24">
+            useEffect(() => {
+                const handleScroll = () => {
+                    const sections = ['home', 'education', 'publications', 'projects', 'contact'];
+                    for (const section of sections) {
+                        const element = document.getElementById(section);
+                        if (element) {
+                            const rect = element.getBoundingClientRect();
+                            if (rect.top >= 0 && rect.top <= 300) {
+                                setActiveSection(section);
+                                break;
+                            }
+                        }
+                    }
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
 
-        {/* Home / Hero Section */}
-        <section id="home" className="flex flex-col md:flex-row gap-8 items-center md:items-start pt-10 animate-fade-in">
-          <div className="flex-1 space-y-6 text-center md:text-left">
-            <div>
-              <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-2">
-                {portfolioData.profile.name}
-              </h1>
-              <p className="text-xl text-blue-600 font-medium">{portfolioData.profile.title}</p>
-              <p className="text-lg text-slate-500">{portfolioData.profile.university}</p>
-            </div>
-            
-            <p className="text-lg leading-relaxed text-slate-600">
-              {portfolioData.profile.bio}
-            </p>
+            const scrollToSection = (id) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    setActiveSection(id);
+                    setIsMenuOpen(false);
+                }
+            };
 
-            <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-              {portfolioData.profile.interests.map((interest, idx) => (
-                <Badge key={idx}>{interest}</Badge>
-              ))}
-            </div>
+            const navItems = [
+                { id: 'home', label: 'Home' },
+                { id: 'education', label: 'Education' },
+                { id: 'publications', label: 'Publications' },
+                { id: 'projects', label: 'Projects' },
+                { id: 'contact', label: 'Contact' },
+            ];
 
-            <div className="flex gap-4 justify-center md:justify-start pt-4">
-              <a href={`mailto:${portfolioData.profile.email}`} className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800 transition-colors">
-                <Mail size={18} /> Contact Me
-              </a>
-              <a href={portfolioData.profile.github} target="_blank" rel="noreferrer" className="p-2 text-slate-500 hover:text-slate-900 border border-slate-200 rounded-md hover:border-slate-400 transition-colors">
-                <Github size={20} />
-              </a>
-              <a href={portfolioData.profile.linkedin} target="_blank" rel="noreferrer" className="p-2 text-slate-500 hover:text-slate-900 border border-slate-200 rounded-md hover:border-slate-400 transition-colors">
-                <Linkedin size={20} />
-              </a>
-            </div>
-          </div>
-          
-          {/* 프로필 이미지 (노트북/코딩 테마) */}
-          <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg relative">
-             <img 
-               src="https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?auto=format&fit=crop&w=600&q=80" 
-               alt="Working on Laptop" 
-               className="w-full h-full object-cover"
-             />
-          </div>
-        </section>
+            return (
+                <div className="min-h-screen bg-slate-50 font-sans text-slate-600">
+                    {/* 네비게이션 바 */}
+                    <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-sm border-b border-slate-200 z-50 shadow-sm">
+                        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between h-16 items-center">
+                                <div className="flex-shrink-0 font-bold text-xl text-slate-800 cursor-pointer" onClick={() => scrollToSection('home')}>
+                                    {portfolioData.profile.name}
+                                </div>
+                                
+                                {/* 데스크탑 메뉴 */}
+                                <div className="hidden md:flex space-x-8">
+                                    {navItems.map((item) => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => scrollToSection(item.id)}
+                                            className={`text-sm font-medium transition-colors duration-200 ${
+                                                activeSection === item.id ? 'text-blue-600' : 'text-slate-500 hover:text-slate-900'
+                                            }`}
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                </div>
 
-        {/* Education Section */}
-        <section id="education" className="scroll-mt-24">
-          <SectionTitle icon={GraduationCap}>Education</SectionTitle>
-          <div className="space-y-4">
-            {portfolioData.education.map((edu, index) => (
-              <div key={index} className="flex flex-col md:flex-row md:items-start justify-between p-4 rounded-lg hover:bg-white hover:shadow-sm transition-all border-l-4 border-transparent hover:border-blue-500">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-slate-800">{edu.school}</h3>
-                  <p className="text-blue-600 font-medium">{edu.degree}</p>
-                  <p className="text-slate-500 text-sm mt-1">{edu.description}</p>
+                                {/* 모바일 메뉴 버튼 */}
+                                <div className="md:hidden">
+                                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-slate-500 hover:text-slate-900">
+                                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 모바일 메뉴 드롭다운 */}
+                        {isMenuOpen && (
+                            <div className="md:hidden bg-white border-t border-slate-100">
+                                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                                    {navItems.map((item) => (
+                                        <button
+                                            key={item.id}
+                                            onClick={() => scrollToSection(item.id)}
+                                            className="block w-full text-left px-3 py-2 text-base font-medium text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-md"
+                                        >
+                                            {item.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* 메인 콘텐츠 컨테이너 */}
+                    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 space-y-24">
+
+                        {/* Home / Hero Section */}
+                        <section id="home" className="flex flex-col md:flex-row gap-8 items-center md:items-start pt-10 animate-fade-in">
+                            <div className="flex-1 space-y-6 text-center md:text-left">
+                                <div>
+                                    <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight mb-2">
+                                        {portfolioData.profile.name}
+                                    </h1>
+                                    <p className="text-xl text-blue-600 font-medium">{portfolioData.profile.title}</p>
+                                    <p className="text-lg text-slate-500">{portfolioData.profile.university}</p>
+                                </div>
+                                
+                                <p className="text-lg leading-relaxed text-slate-600">
+                                    {portfolioData.profile.bio}
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                                    {portfolioData.profile.interests.map((interest, idx) => (
+                                        <Badge key={idx}>{interest}</Badge>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-4 justify-center md:justify-start pt-4">
+                                    <a href={`mailto:${portfolioData.profile.email}`} className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-md hover:bg-slate-800 transition-colors">
+                                        <Mail size={18} /> Contact Me
+                                    </a>
+                                    <a href={portfolioData.profile.github} target="_blank" rel="noreferrer" className="p-2 text-slate-500 hover:text-slate-900 border border-slate-200 rounded-md hover:border-slate-400 transition-colors">
+                                        <Github size={20} />
+                                    </a>
+                                    <a href={portfolioData.profile.linkedin} target="_blank" rel="noreferrer" className="p-2 text-slate-500 hover:text-slate-900 border border-slate-200 rounded-md hover:border-slate-400 transition-colors">
+                                        <Linkedin size={20} />
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            {/* 프로필 이미지 (노트북/코딩 테마) */}
+                            <div className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg relative">
+                                <img 
+                                    src="https://images.unsplash.com/photo-1496171367470-9ed9a91ea931?auto=format&fit=crop&w=600&q=80" 
+                                    alt="Working on Laptop" 
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        </section>
+
+                        {/* Education Section */}
+                        <section id="education" className="scroll-mt-24">
+                            <SectionTitle icon={GraduationCap}>Education</SectionTitle>
+                            <div className="space-y-4">
+                                {portfolioData.education.map((edu, index) => (
+                                    <div key={index} className="flex flex-col md:flex-row md:items-start justify-between p-4 rounded-lg hover:bg-white hover:shadow-sm transition-all border-l-4 border-transparent hover:border-blue-500">
+                                        <div className="flex-1">
+                                            <h3 className="text-lg font-bold text-slate-800">{edu.school}</h3>
+                                            <p className="text-blue-600 font-medium">{edu.degree}</p>
+                                            <p className="text-slate-500 text-sm mt-1">{edu.description}</p>
+                                        </div>
+                                        <div className="mt-2 md:mt-0 md:text-right">
+                                            <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full">
+                                                {edu.year}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Publications Section */}
+                        <section id="publications" className="scroll-mt-24">
+                            <SectionTitle icon={BookOpen}>Publications & Presentations</SectionTitle>
+                            <div className="grid gap-4">
+                                {portfolioData.publications.map((pub, index) => (
+                                    <Card key={index} className="flex flex-col gap-2">
+                                        <div className="flex justify-between items-start">
+                                            <h3 className="text-lg font-bold text-slate-800 leading-snug hover:text-blue-600 transition-colors cursor-pointer">
+                                                {pub.title}
+                                            </h3>
+                                            <span className={`text-xs px-2 py-0.5 rounded font-bold ${pub.tag === 'Research' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}`}>
+                                                {pub.tag}
+                                            </span>
+                                        </div>
+                                        <p className="text-slate-600">{pub.authors}</p>
+                                        <div className="flex items-center justify-between mt-2 text-sm text-slate-500">
+                                            <span className="italic">{pub.venue}, {pub.year}</span>
+                                            <a href={pub.link} className="flex items-center gap-1 text-blue-600 hover:underline">
+                                                <FileText size={14} /> PDF
+                                            </a>
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Projects Section */}
+                        <section id="projects" className="scroll-mt-24">
+                            <SectionTitle icon={Code}>Projects</SectionTitle>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {portfolioData.projects.map((project, index) => (
+                                    <Card key={index} className="flex flex-col h-full">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h3 className="text-lg font-bold text-slate-800">{project.title}</h3>
+                                            <a href={project.link} className="text-slate-400 hover:text-blue-600">
+                                                <ExternalLink size={18} />
+                                            </a>
+                                        </div>
+                                        <p className="text-slate-600 text-sm mb-4 flex-grow">
+                                            {project.description}
+                                        </p>
+                                        <div className="flex flex-wrap gap-2 mt-auto">
+                                            {project.tech.map((t, i) => (
+                                                <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
+                                                    {t}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+                        </section>
+
+                        {/* Contact Section */}
+                        <section id="contact" className="scroll-mt-24 mb-12">
+                            <SectionTitle icon={Mail}>Get In Touch</SectionTitle>
+                            <div className="bg-slate-900 text-slate-300 rounded-2xl p-8 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div>
+                                    <h3 className="text-2xl font-bold text-white mb-2">관심사가 비슷하신가요?</h3>
+                                    <p className="mb-4">연구 협업이나 프로젝트 제안은 언제나 환영합니다.</p>
+                                    <div className="flex flex-col gap-2">
+                                        <a href={`mailto:${portfolioData.profile.email}`} className="text-blue-400 hover:text-blue-300 font-medium text-lg">
+                                            {portfolioData.profile.email}
+                                        </a>
+                                        <p className="text-sm text-slate-500">
+                                            한신대학교
+                                        </p>
+                                    </div>
+                                </div>
+                                <a 
+                                    href={`mailto:${portfolioData.profile.email}`}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg"
+                                >
+                                    Contact Me
+                                </a>
+                            </div>
+                        </section>
+
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="bg-white border-t border-slate-200 py-8">
+                        <div className="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+                            <p>&copy; {new Date().getFullYear()} {portfolioData.profile.name}. All rights reserved.</p>
+                            <p className="mt-1">Built with React & Tailwind CSS</p>
+                        </div>
+                    </footer>
                 </div>
-                <div className="mt-2 md:mt-0 md:text-right">
-                  <span className="inline-block px-3 py-1 bg-slate-100 text-slate-600 text-xs font-semibold rounded-full">
-                    {edu.year}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+            );
+        }
 
-        {/* Publications Section */}
-        <section id="publications" className="scroll-mt-24">
-          <SectionTitle icon={BookOpen}>Publications & Presentations</SectionTitle>
-          <div className="grid gap-4">
-            {portfolioData.publications.map((pub, index) => (
-              <Card key={index} className="flex flex-col gap-2">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-bold text-slate-800 leading-snug hover:text-blue-600 transition-colors cursor-pointer">
-                    {pub.title}
-                  </h3>
-                  <span className={`text-xs px-2 py-0.5 rounded font-bold ${pub.tag === 'Research' ? 'bg-purple-100 text-purple-700' : 'bg-green-100 text-green-700'}`}>
-                    {pub.tag}
-                  </span>
-                </div>
-                <p className="text-slate-600">{pub.authors}</p>
-                <div className="flex items-center justify-between mt-2 text-sm text-slate-500">
-                  <span className="italic">{pub.venue}, {pub.year}</span>
-                  <a href={pub.link} className="flex items-center gap-1 text-blue-600 hover:underline">
-                    <FileText size={14} /> PDF
-                  </a>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Projects Section */}
-        <section id="projects" className="scroll-mt-24">
-          <SectionTitle icon={Code}>Projects</SectionTitle>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {portfolioData.projects.map((project, index) => (
-              <Card key={index} className="flex flex-col h-full">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-lg font-bold text-slate-800">{project.title}</h3>
-                  <a href={project.link} className="text-slate-400 hover:text-blue-600">
-                    <ExternalLink size={18} />
-                  </a>
-                </div>
-                <p className="text-slate-600 text-sm mb-4 flex-grow">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {project.tech.map((t, i) => (
-                    <span key={i} className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="scroll-mt-24 mb-12">
-          <SectionTitle icon={Mail}>Get In Touch</SectionTitle>
-          <div className="bg-slate-900 text-slate-300 rounded-2xl p-8 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-2">관심사가 비슷하신가요?</h3>
-              <p className="mb-4">연구 협업이나 프로젝트 제안은 언제나 환영합니다.</p>
-              <div className="flex flex-col gap-2">
-                <a href={`mailto:${portfolioData.profile.email}`} className="text-blue-400 hover:text-blue-300 font-medium text-lg">
-                  {portfolioData.profile.email}
-                </a>
-                <p className="text-sm text-slate-500">
-                  한신대학교
-                </p>
-              </div>
-            </div>
-            <a 
-              href={`mailto:${portfolioData.profile.email}`}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 shadow-lg"
-            >
-              Contact Me
-            </a>
-          </div>
-        </section>
-
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-8">
-        <div className="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
-          <p>&copy; {new Date().getFullYear()} {portfolioData.profile.name}. All rights reserved.</p>
-          <p className="mt-1">Built with React & Tailwind CSS</p>
-        </div>
-      </footer>
-    </div>
-  );
-}
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
